@@ -11,6 +11,7 @@ class Device
   def initialize
     @attributes = { ip: ENV.fetch('HOST_IP_ADDRESS') }
     @device_attributes = { manufacturer: MANUFACTURER, identifiers: [MAC_IDENTIFIER], hw_version: HW_VERSION }
+    puts "Entities to be initalized!!"
     initialize_entities!
   end
 
@@ -49,6 +50,7 @@ class Device
   private
 
   def initialize_entity(name, status)
+    puts "Initializing entity #{name}"
     {
       sensor: Entities::Sensor.new(device: self, unique_id: name, init_state: status),
       button: Entities::Button.new(device: self, unique_id: "#{name}-button", init_state: 'off', name: "#{name.sanitized_titlecase} Restart")
@@ -61,6 +63,7 @@ class Device
   end
 
   def all_processes
+    puts "Reading all processes!!"
     Dir.glob('*', base: ENV.fetch('BASE_PATH')).select { |f| File.symlink?(File.join(ENV.fetch('BASE_PATH'), f)) }.to_h do |dir|
       if filtered_out?(dir)
         [nil, nil]
@@ -77,6 +80,7 @@ class Device
   end
 
   def setup_listeners_and_publishers!
+    puts "Setting up all listeners and publishers!!"
     setup_publishers!
     setup_entity_updaters!
     setup_listeners!
