@@ -13,14 +13,23 @@ GEM
       tzinfo (~> 2.0)
     base64 (0.2.0)
     bigdecimal (3.1.8)
+    byebug (11.1.3)
     concurrent-ruby (1.3.1)
     connection_pool (2.4.1)
+    dbus-systemd (1.1.2)
+      ruby-dbus (~> 0.14)
     dotenv (3.1.2)
     drb (2.2.1)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     minitest (5.23.1)
+    mqtt (0.6.0)
     mutex_m (0.2.0)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
+    ruby-dbus (0.23.1)
+      rexml
+    strscan (3.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
 
@@ -30,7 +39,10 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
+  byebug
+  dbus-systemd
   dotenv
+  mqtt
 
 BUNDLED WITH
    2.5.10
