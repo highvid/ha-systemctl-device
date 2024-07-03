@@ -11,6 +11,7 @@ class Config
                                         port: ENV.fetch('MQTT_PORT', '1883'),
                                         username: ENV.fetch('MQTT_USERNAME'),
                                         password: ENV.fetch('MQTT_PASSWORD'))
+    puts "Configuration initialized!!"
   end
 
   class << self

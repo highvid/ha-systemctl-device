@@ -14,6 +14,8 @@ require_relative './device'
 Dotenv.load('.env.local') if File.exist?('.env.local')
 require_relative './systemctl'
 
+puts "Config to be initialized!!"
 Config.init!
+puts "Device to be initialized!!"
 Device.new
 Config.singleton.join!
