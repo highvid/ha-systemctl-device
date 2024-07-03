@@ -6,6 +6,7 @@ class Config
   def initialize
     Thread.report_on_exception = false
     @publisher_threads = []
+    pp ENV.keys
     @mqtt_server = MQTT::Client.connect(host: ENV.fetch('MQTT_HOST'),
                                         port: ENV.fetch('MQTT_PORT', '1883'),
                                         username: ENV.fetch('MQTT_USERNAME'),
