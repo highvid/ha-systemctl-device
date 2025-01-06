@@ -1,0 +1,51 @@
+name: Bump Version on Merge to Main
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Extract Tag from Commit Message
+        id: extract_tag
+        run: |
+          # Get the last commit message
+          LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          
+          # Extract the tag (e.g., "tag:v1.2.3")
+          if [[ $LAST_COMMIT_MESSAGE =~ tag:([\d]+\.[\d]+\.[\d]+)[\s]+(.*) ]]; then
+            echo "Custom tag found: ${BASH_REMATCH[1]}"
+            echo "Custom message: ${BASH_REMATCH[2]}"
+            echo "custom_tag=${BASH_REMATCH[1]}" >> $GITHUB_ENV
+            echo "custom_message=${BASH_REMATCH[2]}" >> $GITHUB_ENV
+          else
+            echo "Unable to extract tag and message"
+            exit 1
+          fi
+      - name: Create and Push Tag
+        run: |
+          # Create the tag locally
+          git tag ${{ env.custom_tag }}
+          
+          # Push the tag to the repository
+          git push origin ${{ env.custom_tag }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
+      # Bump version
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
+        with:
+          tag_name: ${{ env.custom_tag }}
+          release_name: ${{ env.custom_message }}
+          draft: false
+          prerelease: false
