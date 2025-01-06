@@ -79,7 +79,7 @@ class Device
       end
     rescue DBus::Error
       puts "Error while getting info on service #{dir}"
-      [name, 'failed']
+      [dir, 'failed']
     end.compact
   end
 
