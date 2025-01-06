@@ -33,7 +33,7 @@ jobs:
       - name: Create and Push Tag
         run: |
           # Create the tag locally
-          git tag ${{ env.custom_tag }}
+          git tag v${{ env.custom_tag }}
           
           # Push the tag to the repository
           git push origin ${{ env.custom_tag }}
@@ -45,7 +45,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
         with:
-          tag_name: ${{ env.custom_tag }}
+          tag_name: v${{ env.custom_tag }}
           release_name: ${{ env.custom_message }}
           draft: false
           prerelease: false
