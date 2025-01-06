@@ -54,7 +54,7 @@ class Device
     if status.to_s == 'failed'
       puts "Unpublishing #{name}"
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}/config", '')
-      Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}-button/config", '')
+      Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/button/#{name}-button/config", '')
       [nil, nil]
     end
     [ name, {
