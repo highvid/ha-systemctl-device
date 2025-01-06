@@ -70,7 +70,7 @@ class Device
 
   def all_processes
     puts "Reading all processes!!"
-    Dir.glob('*', base: ENV.fetch('BASE_PATH')).select { |f| File.symlink?(File.join(ENV.fetch('BASE_PATH'), f)) }.to_h do |dir|
+    @all_processes = Dir.glob('*', base: ENV.fetch('BASE_PATH')).select { |f| File.symlink?(File.join(ENV.fetch('BASE_PATH'), f)) }.to_h do |dir|
       if filtered_out?(dir)
         [nil, nil]
       else
@@ -81,6 +81,8 @@ class Device
       puts "Error while getting info on service #{dir}"
       [dir, 'failed']
     end.compact
+    puts "All processes #{@all_processes}"
+    @all_processes
   end
 
   def filtered_out?(dir)
