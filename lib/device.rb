@@ -77,6 +77,7 @@ class Device
         [dir, DBus::Systemd::Unit.new("docker-compose@#{dir}.service").properties['ActiveState']]
       end
     rescue DBus::Error
+      puts "Error while getting info on service #{dir}"
       [nil, nil]
     end.compact
   end
