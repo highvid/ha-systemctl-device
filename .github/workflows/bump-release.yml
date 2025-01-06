@@ -19,9 +19,6 @@ jobs:
         id: extract_tag
         run: |
           LAST_COMMIT_MESSAGE="${{ github.event.pull_request.title }}"
-          
-          echo "Message: ${LAST_COMMIT_MESSAGE}"
-          # Extract the tag (e.g., "tag:v1.2.3")
           if [[ $LAST_COMMIT_MESSAGE =~ tag:([^[:space:]]+)[[:space:]]+(.*) ]]; then
             echo "Custom tag found: ${BASH_REMATCH[1]}"
             echo "Custom message: ${BASH_REMATCH[2]}"
