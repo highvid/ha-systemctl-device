@@ -20,6 +20,7 @@ jobs:
           # Get the last commit message
           LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           
+          echo "Message: ${LAST_COMMIT_MESSAGE}"
           # Extract the tag (e.g., "tag:v1.2.3")
           if [[ $LAST_COMMIT_MESSAGE =~ tag:v([\d]+\.[\d]+\.[\d]+)[\s]+(.*) ]]; then
             echo "Custom tag found: ${BASH_REMATCH[1]}"
