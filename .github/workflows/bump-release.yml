@@ -22,7 +22,7 @@ jobs:
           
           echo "Message: ${LAST_COMMIT_MESSAGE}"
           # Extract the tag (e.g., "tag:v1.2.3")
-          if [[ $LAST_COMMIT_MESSAGE =~ tag:v([\d]+\.[\d]+\.[\d]+)[\s]+(.*) ]]; then
+          if [[ $LAST_COMMIT_MESSAGE =~ tag:([^\s]+)\s+(.*) ]]; then
             echo "Custom tag found: ${BASH_REMATCH[1]}"
             echo "Custom message: ${BASH_REMATCH[2]}"
             echo "custom_tag=${BASH_REMATCH[1]}" >> $GITHUB_ENV
@@ -34,7 +34,7 @@ jobs:
       - name: Create and Push Tag
         run: |
           # Create the tag locally
-          git tag v${{ env.custom_tag }}
+          git tag ${{ env.custom_tag }}
           
           # Push the tag to the repository
           git push origin ${{ env.custom_tag }}
@@ -46,7 +46,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
         with:
-          tag_name: v${{ env.custom_tag }}
+          tag_name: ${{ env.custom_tag }}
           release_name: ${{ env.custom_message }}
           draft: false
           prerelease: false
