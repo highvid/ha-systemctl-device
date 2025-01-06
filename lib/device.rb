@@ -74,7 +74,6 @@ class Device
       if filtered_out?(dir)
         [nil, nil]
       else
-        puts "Found service #{dir}"
         [dir, DBus::Systemd::Unit.new("docker-compose@#{dir}.service").properties['ActiveState']]
       end
     rescue DBus::Error
