@@ -30,8 +30,6 @@ jobs:
           fi
       - name: Create and Push Tag
         run: |
-          echo "Setting remote url to git@github.com:${{github.repository}}.git"
-          git remote set-url origin git@github.com:${{github.repository}}.git
           git tag ${{ env.custom_tag }}
           git push origin ${{ env.custom_tag }}
         env:
