@@ -51,14 +51,19 @@ class Device
 
   def initialize_entity(name, status)
     puts "Initializing entity #{name}"
-    {
+    if status == 'failed'
+      Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}/config", '')
+      Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}-button/config", '')
+      [nil, nil]
+    end
+    [ name, {
       sensor: Entities::Sensor.new(device: self, unique_id: name, init_state: status),
       button: Entities::Button.new(device: self, unique_id: "#{name}-button", init_state: 'off', name: "#{name.sanitized_titlecase} Restart")
-    }
+    } ]
   end
 
   def initialize_entities!
-    @entities = all_processes.to_h { |entity_name, status| [entity_name,  initialize_entity(entity_name, status)] }
+    @entities = all_processes.to_h { |entity_name, status| initialize_entity(entity_name, status) }.compact
     setup_listeners_and_publishers!
   end
 
