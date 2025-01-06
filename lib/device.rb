@@ -51,7 +51,7 @@ class Device
 
   def initialize_entity(name, status)
     puts "Initializing entity #{name}"
-    if status == 'failed'
+    if status.to_s == 'failed'
       puts "Unpublishing #{name}"
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}/config", '')
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}-button/config", '')
@@ -79,7 +79,7 @@ class Device
       end
     rescue DBus::Error
       puts "Error while getting info on service #{dir}"
-      [nil, nil]
+      [name, 'failed']
     end.compact
   end
 
