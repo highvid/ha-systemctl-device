@@ -55,7 +55,7 @@ class Device
       puts "Unpublishing #{name}"
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}/config", '')
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/button/#{name}-button/config", '')
-      [nil, nil]
+      return [nil, nil]
     end
     [ name, {
       sensor: Entities::Sensor.new(device: self, unique_id: name, init_state: status),
