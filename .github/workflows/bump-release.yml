@@ -1,12 +1,13 @@
 name: Bump Version on Merge to Main
 
 on:
-  push:
-    branches:
-      - main
+  pull_request:
+    types:
+      - closed
 
 jobs:
-  bump-version:
+  create-release:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
@@ -17,8 +18,7 @@ jobs:
       - name: Extract Tag from Commit Message
         id: extract_tag
         run: |
-          # Get the last commit message
-          LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          LAST_COMMIT_MESSAGE="${{ github.event.pull_request.title }}"
           
           echo "Message: ${LAST_COMMIT_MESSAGE}"
           # Extract the tag (e.g., "tag:v1.2.3")
