@@ -21,7 +21,7 @@ jobs:
           LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           
           # Extract the tag (e.g., "tag:v1.2.3")
-          if [[ $LAST_COMMIT_MESSAGE =~ tag:([\d]+\.[\d]+\.[\d]+)[\s]+(.*) ]]; then
+          if [[ $LAST_COMMIT_MESSAGE =~ tag:v([\d]+\.[\d]+\.[\d]+)[\s]+(.*) ]]; then
             echo "Custom tag found: ${BASH_REMATCH[1]}"
             echo "Custom message: ${BASH_REMATCH[2]}"
             echo "custom_tag=${BASH_REMATCH[1]}" >> $GITHUB_ENV
