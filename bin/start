@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-puts "Starting.."
+puts 'Starting..'
 require_relative '../lib/start'

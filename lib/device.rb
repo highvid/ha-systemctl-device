@@ -1,17 +1,16 @@
-
 class Device
-  HW_VERSION = "BlighVidMonitor1.0"
+  HW_VERSION = 'BlighVidMonitor1.0'.freeze
   MAC_IDENTIFIER = ENV.fetch('MAC_IDENTIFIER')
-  MANUFACTURER = 'BlighVid Monitor'
-  MODEL = 'Blighvid'
-  NAME = 'Blighvid Process'
-  IDENTIFIER = 'blighvid_processes'
+  MANUFACTURER = 'BlighVid Monitor'.freeze
+  MODEL = 'Blighvid'.freeze
+  NAME = 'Blighvid Process'.freeze
+  IDENTIFIER = 'blighvid_processes'.freeze
   attr_accessor :attributes, :device_attributes, :entities
 
   def initialize
     @attributes = { ip: ENV.fetch('HOST_IP_ADDRESS') }
     @device_attributes = { manufacturer: MANUFACTURER, identifiers: [MAC_IDENTIFIER], hw_version: HW_VERSION }
-    puts "Entities to be initalized!!"
+    puts 'Entities to be initalized!!'
     initialize_entities!
   end
 
@@ -43,9 +42,7 @@ class Device
     Systemctl::VERSION
   end
 
-  def restart!(service_name)
-
-  end
+  def restart!(service_name); end
 
   private
 
@@ -57,10 +54,11 @@ class Device
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/button/#{name}-button/config", '')
       return [nil, nil]
     end
-    [ name, {
+    [name, {
       sensor: Entities::Sensor.new(device: self, unique_id: name, init_state: status),
-      button: Entities::Button.new(device: self, unique_id: "#{name}-button", init_state: 'off', name: "#{name.sanitized_titlecase} Restart")
-    } ]
+      button: Entities::Button.new(device: self, unique_id: "#{name}-button", init_state: 'off',
+                                   name: "#{name.sanitized_titlecase} Restart")
+    }]
   end
 
   def initialize_entities!
@@ -69,8 +67,11 @@ class Device
   end
 
   def all_processes
-    puts "Reading all processes!!"
-    @all_processes = Dir.glob('*', base: ENV.fetch('BASE_PATH')).select { |f| File.symlink?(File.join(ENV.fetch('BASE_PATH'), f)) }.to_h do |dir|
+    puts 'Reading all processes!!'
+    @all_processes = Dir.glob('*', base: ENV.fetch('BASE_PATH')).select do |f|
+      File.symlink?(File.join(ENV.fetch('BASE_PATH'), f))
+    end
+    @all_processes = @all_processes.to_h do |dir|
       if filtered_out?(dir)
         [nil, nil]
       else
@@ -89,23 +90,18 @@ class Device
   end
 
   def setup_listeners_and_publishers!
-    puts "Setting up all listeners and publishers!!"
+    puts 'Setting up all listeners and publishers!!'
     setup_publishers!
     setup_entity_updaters!
     setup_listeners!
   end
 
   def setup_listeners!
-    @entities.values.each do |entity_group|
-      Config.singleton.mqtt_server.subscribe(entity_group[:button].topic_command)
-      puts "Subscribing to #{entity_group[:button].topic_command}"
-    end
+    @entities.each_value { |entity_group| Config.singleton.mqtt_server.subscribe(entity_group[:button].topic_command) }
     Config.store_publisher_thread('device-listener', 0) do
       Config.singleton.mqtt_server.get do |topic, message|
-        puts "Command received for #{topic} -> #{message}"
         if message == 'PRESS'
-          service_name = topic.gsub(/^blighvid\/systemctl\//, '').gsub(/-button\/command$/, '')
-          puts "Restarting service #{service_name}"
+          service_name = topic.gsub(%r{^blighvid/systemctl/}, '').gsub(%r{-button/command$}, '')
           service = DBus::Systemd::Unit.new("docker-compose@#{service_name}.service")
           service.Restart('replace')
         end
@@ -114,7 +110,7 @@ class Device
   end
 
   def setup_publishers!
-    @entities.values.each do |entity_group|
+    @entities.each_value do |entity_group|
       entity_group[:sensor].setup_publishers!
       entity_group[:button].setup_publishers!
     end

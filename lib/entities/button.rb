@@ -8,7 +8,7 @@ module Entities
     end
 
     private
-    
+
     def discovery_payload
       super.merge(command_topic: topic_command)
     end

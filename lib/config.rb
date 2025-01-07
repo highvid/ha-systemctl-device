@@ -1,8 +1,9 @@
 class Config
-  HOME_ASSISTANT_PREFIX = 'homeassistant'
+  HOME_ASSISTANT_PREFIX = 'homeassistant'.freeze
   class RestartError < StandardError; end
   class OfflineError < StandardError; end
   attr_accessor :publisher_threads, :mqtt_server
+
   def initialize
     Thread.report_on_exception = false
     @publisher_threads = []
@@ -11,7 +12,7 @@ class Config
                                         port: ENV.fetch('MQTT_PORT', '1883'),
                                         username: ENV.fetch('MQTT_USERNAME'),
                                         password: ENV.fetch('MQTT_PASSWORD'))
-    puts "Configuration initialized!!"
+    puts 'Configuration initialized!!'
   end
 
   class << self
@@ -35,14 +36,13 @@ class Config
 
     def inifinite_threadize(name, delay_in_seconds, callback_on_offline:)
       threadize(name) do
-        while true do
+        loop do
           yield if block_given?
           sleep delay_in_seconds
         end
       rescue RestartError
         retry
       rescue OfflineError
-        puts "Marking offline for #{Thread.current['name']}" if callback_on_offline.present?
         callback_on_offline.call if callback_on_offline.present?
       end
     end
@@ -51,9 +51,9 @@ class Config
       Thread.new do
         Thread.current['name'] = name
         yield if block_given?
-      rescue => error
-        puts "Error: #{error.message}"
-        puts error.backtrace.join("\n")
+      rescue StandardError => e
+        puts "Error: #{e.message}"
+        puts e.backtrace.join("\n")
       end
     end
   end
@@ -61,7 +61,7 @@ class Config
   def join!
     publisher_threads.each(&:join)
   rescue SignalException
-    publisher_threads.each { |thread| thread.raise(Config::OfflineError, 'Offline')}
+    publisher_threads.each { |thread| thread.raise(Config::OfflineError, 'Offline') }
     publisher_threads.each(&:join)
   end
 end
