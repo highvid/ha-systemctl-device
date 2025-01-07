@@ -23,7 +23,7 @@ jobs:
 
       - name: Debug Event
         run: |
-          echo "${{ toJson(github.github.event.workflow_run) }}"
+          echo "${{ toJson(github.event.workflow_run) }}"
       - name: Extract Tag from Commit Message
         id: extract_tag
         run: |
