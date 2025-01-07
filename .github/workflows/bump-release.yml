@@ -22,8 +22,9 @@ jobs:
       - name: Extract Tag from Commit Message
         id: extract_tag
         run: |
-          echo "Commit message ${{github.event.head_commit.message}}"
+          echo "Commit message $(git log -1 --pretty=%B)"
           LAST_COMMIT_MESSAGE="${{ github.event.pull_request.title }}"
+          
           if [[ $LAST_COMMIT_MESSAGE =~ tag:([^[:space:]]+)[[:space:]]+(.*) ]]; then
             echo "Custom tag found: ${BASH_REMATCH[1]}"
             echo "Custom message: ${BASH_REMATCH[2]}"
