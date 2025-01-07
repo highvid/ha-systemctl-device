@@ -3,7 +3,7 @@ name: Tagged Release
 on:
   workflow_run:
     workflows:
-      - Run Tests # Depend on "Build and Test"
+      - Run Tests
     types:
       - completed
 
@@ -18,7 +18,6 @@ jobs:
       contents: write
 
     steps:
-      # Checkout the repository
       - name: Checkout Code
         uses: actions/checkout@v3
 
