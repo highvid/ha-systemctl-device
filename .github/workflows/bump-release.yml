@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     if: > 
       ${{ github.event.workflow_run.conclusion  == 'success' &&
-          github.event.workflow_run.head_commit.ref == 'refs/heads/main' &&
+          github.event.workflow_run.head_branch == 'main' &&
           github.event.workflow_run.event       == 'push' }}
     permissions:
       contents: write
@@ -20,11 +20,19 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        if: > 
+          ${{ github.event.workflow_run.conclusion  == 'success' &&
+              github.event.workflow_run.head_branch == 'main' &&
+              github.event.workflow_run.event       == 'push' }}
 
       - name: Dump Workflow context
         env:
           WORKFLOW_CONTEXT: ${{ toJson(github.event.workflow_run) }}
         run: echo "Workflow context is $WORKFLOW_CONTEXT"
+        if: > 
+          ${{ github.event.workflow_run.conclusion  == 'success' &&
+              github.event.workflow_run.head_branch == 'main' &&
+              github.event.workflow_run.event       == 'push' }}
       - name: Extract Tag from Commit Message
         id: extract_tag
         run: |
@@ -40,8 +48,14 @@ jobs:
             echo "Unable to extract tag and message"
             echo "should_continue=false" >> $GITHUB_ENV
           fi
+        if: > 
+          ${{ github.event.workflow_run.conclusion  == 'success' &&
+              github.event.workflow_run.head_branch == 'main' &&
+              github.event.workflow_run.event       == 'push' }}
       - name: Create and Push Tag
-        if: ${{ env.should_continue == 'true' }}
+        if: ${{ env.should_continue == 'true' && github.event.workflow_run.conclusion  == 'success' &&
+              github.event.workflow_run.head_branch == 'main' &&
+              github.event.workflow_run.event       == 'push'  }}
         run: |
           git tag ${{ env.custom_tag }}
           git push origin ${{ env.custom_tag }}
@@ -49,7 +63,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
       - name: Create GitHub Release
         uses: actions/create-release@v1
-        if: ${{ env.should_continue == 'true' }}
+        if: ${{ env.should_continue == 'true' && github.event.workflow_run.conclusion  == 'success' &&
+              github.event.workflow_run.head_branch == 'main' &&
+              github.event.workflow_run.event       == 'push'  }}
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
         with:
