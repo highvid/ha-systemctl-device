@@ -22,6 +22,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Debug Event
+        run: |
+          echo "${{ toJson(github.github.event.workflow_run) }}
       - name: Extract Tag from Commit Message
         id: extract_tag
         run: |
