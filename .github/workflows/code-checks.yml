@@ -13,16 +13,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Set up Ruby environment
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
 
-      # Install dependencies
       - name: Install dependencies
         run: bundle install
 
-      # Run RuboCop
       - name: Run RuboCop
         run: bundle exec rubocop

@@ -9,11 +9,11 @@ on:
 
 jobs:
   create-release:
+    runs-on: ubuntu-latest
     if: > 
       ${{ github.event.workflow_run.conclusion  == 'success' &&
-          github.event.workflow_run.head_branch == 'main' &&
+          github.event.workflow_run.head_commit.ref == 'refs/heads/main' &&
           github.event.workflow_run.event       == 'push' }}
-    runs-on: ubuntu-latest
     permissions:
       contents: write
 
@@ -23,7 +23,7 @@ jobs:
 
       - name: Dump Workflow context
         env:
-          WORKFLOW_CONTEXT: ${{ toJson(github.event.workflow_run.head_branch) }}
+          WORKFLOW_CONTEXT: ${{ toJson(github.event.workflow_run) }}
         run: echo "Workflow context is $WORKFLOW_CONTEXT"
       - name: Extract Tag from Commit Message
         id: extract_tag
