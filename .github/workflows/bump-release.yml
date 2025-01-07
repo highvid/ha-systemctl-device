@@ -22,6 +22,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Debug Event
+        run: |
+          echo "${{ toJson(github.github.event.workflow_run) }}
       - name: Extract Tag from Commit Message
         id: extract_tag
         run: |
@@ -32,11 +35,13 @@ jobs:
             echo "Custom message: ${BASH_REMATCH[2]}"
             echo "custom_tag=${BASH_REMATCH[1]}" >> $GITHUB_ENV
             echo "custom_message=${BASH_REMATCH[2]}" >> $GITHUB_ENV
+            echo "should_continue=true" >> $GITHUB_ENV
           else
             echo "Unable to extract tag and message"
-            exit 1
+            echo "should_continue=false" >> $GITHUB_ENV
           fi
       - name: Create and Push Tag
+        if: ${{ env.should_continue == 'true' }}
         run: |
           git tag ${{ env.custom_tag }}
           git push origin ${{ env.custom_tag }}
@@ -45,6 +50,7 @@ jobs:
       # Bump version
       - name: Create GitHub Release
         uses: actions/create-release@v1
+        if: ${{ env.should_continue == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_ACCESS_KEY }}
         with:
