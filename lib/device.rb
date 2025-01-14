@@ -10,7 +10,6 @@ class Device
   def initialize
     @attributes = { ip: ENV.fetch('HOST_IP_ADDRESS') }
     @device_attributes = { manufacturer: MANUFACTURER, identifiers: [MAC_IDENTIFIER], hw_version: HW_VERSION }
-    puts 'Entities to be initalized!!'
     initialize_entities!
   end
 
@@ -47,9 +46,7 @@ class Device
   private
 
   def initialize_entity(name, status)
-    puts "Initializing entity #{name}"
     if status.to_s == 'failed'
-      puts "Unpublishing #{name}"
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/sensor/#{name}/config", '')
       Config.singleton.mqtt_server.publish("#{Config::HOME_ASSISTANT_PREFIX}/button/#{name}-button/config", '')
       return [nil, nil]
@@ -67,7 +64,6 @@ class Device
   end
 
   def all_processes
-    puts 'Reading all processes!!'
     @all_processes = Dir.glob('*', base: ENV.fetch('BASE_PATH')).select do |f|
       File.symlink?(File.join(ENV.fetch('BASE_PATH'), f))
     end
@@ -78,10 +74,8 @@ class Device
         [dir, DBus::Systemd::Unit.new("docker-compose@#{dir}.service").properties['ActiveState']]
       end
     rescue DBus::Error
-      puts "Error while getting info on service #{dir}"
       [dir, 'failed']
     end.compact
-    puts "All processes #{@all_processes}"
     @all_processes
   end
 
@@ -90,7 +84,6 @@ class Device
   end
 
   def setup_listeners_and_publishers!
-    puts 'Setting up all listeners and publishers!!'
     setup_publishers!
     setup_entity_updaters!
     setup_listeners!

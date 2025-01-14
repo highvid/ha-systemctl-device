@@ -58,7 +58,6 @@ module Entities
 
     def setup_thread_discovery!
       @thread_discovery = Config.store_publisher_thread("#{unique_id}-discovery", DISCOVERY_PUBLISH_WAIT) do
-        puts "Publishing discovery details for #{unique_id}"
         Config.singleton.mqtt_server.publish(topic_discovery, discovery_payload.to_json)
       end
     end
@@ -73,14 +72,12 @@ module Entities
 
     def setup_thread_state!
       @thread_state = Config.store_publisher_thread("#{unique_id}-state", STATE_PUBLISH_WAIT) do
-        puts "Publishing to state topic #{topic_state} for #{unique_id}"
         Config.singleton.mqtt_server.publish(topic_state, state)
       end
     end
 
     def setup_thread_attribute!
       @thread_attribute = Config.store_publisher_thread("#{unique_id}-attribute", ATTRIBUTES_PUBLISH_WAIT) do
-        puts "Publishing to atrribute topic #{topic_attribute} for #{unique_id}"
         Config.singleton.mqtt_server.publish(topic_attribute, attributes)
       end
     end
